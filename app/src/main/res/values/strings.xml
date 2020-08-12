@@ -1,5 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <string name="app_name">DocScan</string>
-    <string name="text_camera">text_camera</string>
-    <string name="text_gallary">text_gallary</string>
+    <string name="action_settings">Save as Pdf</string>
+    <string name="media">Media</string>
+    <string name="camera">Camera</string>
+
 </resources>
