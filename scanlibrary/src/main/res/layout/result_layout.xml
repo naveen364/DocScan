@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
+    android:background="@android:color/white"
     android:orientation="vertical">
 
     <LinearLayout
@@ -19,7 +19,7 @@
             android:background="@android:color/transparent"
             android:drawableTop="@drawable/ic_image"
             android:text="Original"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/magicColor"
@@ -30,7 +30,7 @@
             android:drawableTop="@drawable/ic_enhamce_image"
             android:singleLine="true"
             android:text="Magic color"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/grayMode"
@@ -41,7 +41,7 @@
             android:drawableTop="@drawable/ic_gray"
             android:singleLine="true"
             android:text="Gray Mode"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/black" />
 
         <Button
             android:id="@+id/BWMode"
@@ -52,7 +52,7 @@
             android:drawableTop="@drawable/ic_black_and_white"
             android:singleLine="true"
             android:text="B and W"
-            android:textColor="@android:color/white" />
+            android:textColor="@android:color/black" />
     </LinearLayout>
 
     <Button
@@ -79,7 +79,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_margin="@dimen/scanPadding" />
+            android:layout_margin="@dimen/scanPadding"
+            android:scaleType="fitXY"/>
     </FrameLayout>
 
 

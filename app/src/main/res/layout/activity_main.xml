@@ -8,17 +8,19 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity">
 
-    <ImageView
-        android:id="@+id/scannedImage"
+    <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginBottom="200dp"/>
+        android:id="@+id/recycleview"/>
+
+
     <Button
         android:id="@+id/add"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/lay"
         android:text="ADD"
+        android:textColor="@color/b"
         android:visibility="gone"/>
 
     <LinearLayout
@@ -33,6 +35,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:textColor="@color/b"
+            android:background="@color/colorPrimary"
             android:text="@string/camera" />
 
 
@@ -42,6 +46,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
+            android:textColor="@color/b"
+            android:background="@color/colorPrimary"
             android:text="@string/media" />
 
 

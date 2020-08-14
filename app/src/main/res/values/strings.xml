@@ -5,5 +5,7 @@
     <string name="action_settings">Save as Pdf</string>
     <string name="media">Media</string>
     <string name="camera">Camera</string>
+    <string name="save_as_pdf">Save As Pdf</string>
+    <string name="Rename">rename</string>
 
 </resources>
