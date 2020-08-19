@@ -10,7 +10,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/bottom_background_color"
+        android:background="@drawable/btn_all"
+        android:textColor="#808080"
+        android:textSize="18sp"
+        android:layout_margin="10dp"
         android:orientation="horizontal"
         android:padding="@dimen/bottom_bar_padding"
         android:text="@string/scan"/>

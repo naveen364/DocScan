@@ -7,5 +7,6 @@
     <string name="camera">Camera</string>
     <string name="save_as_pdf">Save As Pdf</string>
     <string name="Rename">rename</string>
+    <string name="share_pdf" />
 
 </resources>

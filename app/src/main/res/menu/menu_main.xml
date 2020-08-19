@@ -3,6 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/action_Rename" app:showAsAction="ifRoom" android:icon="@drawable/ic_rename"
         android:title="@string/Rename" />
+    <item android:id="@+id/action_share" app:showAsAction="ifRoom" android:icon="@drawable/ic_share"
+        android:title="@string/share_pdf"
+        android:visible="false"/>
     <item android:id="@+id/action_settings" app:showAsAction="ifRoom" android:icon="@drawable/ic_save_pdf"
-        android:title="@string/save_as_pdf" />
+        android:title="@string/save_as_pdf"
+        android:visible="false"/>
 </menu>

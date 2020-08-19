@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
@@ -26,10 +25,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.scanlibrary.ScanActivity;
@@ -49,18 +50,20 @@ import java.util.Objects;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_CODE = 99;
-    private Button cameraButton;
-    private Button mediaButton;
+    private ImageButton cameraButton;
+    private ImageButton mediaButton;
     private Button add;
     private Bitmap bitmap = null;
     ArrayList<Bitmap> bitmapArrayList = new ArrayList<Bitmap>();
     private ImageAdapter imageAdapter;
-    private Bitmap outBitmap;
     private int count =1;
-    private int deg = 90;
     private RecyclerView recyclerView;
     private Parcelable mBundleRecyclerViewState;
     private String mtext;
+    private String save;
+    private MenuItem menushare;
+    private MenuItem menupdf;
+    private LinearLayout linearLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,28 +75,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        add = (Button) findViewById(R.id.add);
-        cameraButton = (Button) findViewById(R.id.cameraButton);
+        add = findViewById(R.id.add);
+        linearLayout = findViewById(R.id.lay);
+        cameraButton = findViewById(R.id.cameraButton);
         cameraButton.setOnClickListener(new ScanButtonClickListener(ScanConstants.OPEN_CAMERA));
-        mediaButton = (Button) findViewById(R.id.mediaButton);
+        mediaButton = findViewById(R.id.mediaButton);
         mediaButton.setOnClickListener(new ScanButtonClickListener(ScanConstants.OPEN_MEDIA));
-        recyclerView = (RecyclerView) findViewById(R.id.recycleview);
+        menupdf = findViewById(R.id.action_settings);
+        menushare = findViewById(R.id.action_share);
+        recyclerView = findViewById(R.id.recycleview);
         imageAdapter = new ImageAdapter(this,bitmapArrayList);
-
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(new GridLayoutManager(this,2));
         recyclerView.setAdapter(imageAdapter);
         recyclerView.setHasFixedSize(true);
     }
 
     public void visible(){
-        if(bitmapArrayList.size()<1){
+        if(imageAdapter.getItemCount()<1){
             add.setVisibility(View.GONE);
+            linearLayout.setVisibility(View.VISIBLE);
             cameraButton.setVisibility(View.VISIBLE);
             mediaButton.setVisibility(View.VISIBLE);
 
         }else{
             add.setVisibility(View.VISIBLE);
+            linearLayout.setVisibility(View.GONE);
             cameraButton.setVisibility(View.GONE);
             mediaButton.setVisibility(View.GONE);
         }
@@ -135,17 +141,20 @@ public class MainActivity extends AppCompatActivity {
             String picture_Path = cursor.getString(column_index_data);
             */
             img_bitmap(uri);
+
         }
     }
+
+
 
     public void img_bitmap(Uri uri){
         try {
             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
             getContentResolver().delete(uri, null, null);
             Matrix matrix = new Matrix();
-            matrix.setRotate(90);
+            matrix.setRotate(0);
             Bitmap bitmap1 = bitmap.copy(Bitmap.Config.ARGB_8888,false);
-            outBitmap = Bitmap.createBitmap(bitmap1,0,0,bitmap1.getWidth(),bitmap1.getHeight(),matrix,true);
+            Bitmap outBitmap = Bitmap.createBitmap(bitmap1, 0, 0, bitmap1.getWidth(), bitmap1.getHeight(), matrix, true);
             Bitmap scalebitmap = Bitmap.createScaledBitmap(outBitmap,595,842,true);
             bitmapArrayList.add(scalebitmap);
             imageAdapter.notifyDataSetChanged();
@@ -153,6 +162,8 @@ public class MainActivity extends AppCompatActivity {
                 add.setVisibility(View.VISIBLE);
                 cameraButton.setVisibility(View.GONE);
                 mediaButton.setVisibility(View.GONE);
+                menushare.setVisible(true);
+                menupdf.setVisible(true);
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -164,7 +175,6 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 startScan(ScanConstants.OPEN_CAMERA);
-                                deg = 90;
                                 Toast.makeText(MainActivity.this,"positive button", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -188,14 +198,22 @@ public class MainActivity extends AppCompatActivity {
 
                         AlertDialog alert =builder.create();
                         count = bitmapArrayList.size();
+                        if(count == 0){
+                            visible();
+                        }
                         Toast.makeText(MainActivity.this,"count = "+count, Toast.LENGTH_SHORT).show();
                         alert.show();
                     }
                 });
             }
+            else {
+                menupdf.setVisible(false);
+                menushare.setVisible(false);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        visible();
     }
 
     @Override
@@ -250,10 +268,38 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
+      //  if(save!= null){
+            //shareFile(save);
+       // }
     }
+
+    public ImageAdapter getImageAdapter() {
+        return imageAdapter;
+    }
+/*
+    private void shareFile(String save){
+        File fdir = new File(Environment.getExternalStorageDirectory(),"docscan");
+        String path = Environment.getExternalStorageDirectory()+"/docscan/"+save+".pdf";
+        Toast.makeText(this,"path"+path,Toast.LENGTH_SHORT).show();
+        File file = new File(path);
+        Uri bmpUri = FileProvider.getUriForFile(this,"com.codewithnaveen.docscan.fileprovider",file);
+        if(fdir.exists()) {
+            Intent intentShareFile = new Intent(Intent.ACTION_VIEW);
+            intentShareFile.setDataAndType(bmpUri,"application/pdf");
+            intentShareFile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            try{
+                startActivity(intentShareFile);
+            }catch (ActivityNotFoundException e){
+
+            }
+        }
+    }
+    */
 
     private File getOutputFile(String mtext){
         File file = new File(Environment.getExternalStorageDirectory(),"docscan");
+        Toast.makeText(this,"file"+file,Toast.LENGTH_SHORT).show();
         boolean isFolderCreated = true;
         String imageFileName;
         if(!file.exists()){
@@ -266,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
             }else {
                 imageFileName = "PDF_" + timeStamp;
             }
+            save = imageFileName;
             return new File(file,imageFileName+".pdf");
         }
         else{
@@ -275,14 +322,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private Bitmap convertByteArrayToBitmap(byte[] data) {
-        return BitmapFactory.decodeByteArray(data, 0, data.length);
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        menupdf = menu.findItem(R.id.action_settings);
+        menushare = menu.findItem(R.id.action_share);
+        MenuItem menurename = menu.findItem(R.id.action_Rename);
+        if(getImageAdapter() == null || getImageAdapter().getItemCount() == 0){
+            menupdf.setVisible(false);
+            menurename.setVisible(false);
+            menushare.setVisible(false);
+        }else {
+            menupdf.setVisible(true);
+            menurename.setVisible(true);
+            menushare.setVisible(true);
+        }
+
         return true;
     }
 
@@ -298,6 +355,8 @@ public class MainActivity extends AppCompatActivity {
             if(bitmapArrayList.size()>0) {
                 createpdf(bitmapArrayList.size());
                 bitmapArrayList.clear();
+                menupdf.setVisible(false);
+                menushare.setVisible(false);
                 Toast.makeText(this, "pdf saved"+bitmapArrayList, Toast.LENGTH_SHORT).show();
                 imageAdapter.notifyDataSetChanged();
                 visible();
@@ -330,6 +389,11 @@ public class MainActivity extends AppCompatActivity {
             builder1.show();
         }
 
+      /*  if(id == R.id.action_share) {
+
+        }*/
+
         return super.onOptionsItemSelected(item);
     }
+
 }

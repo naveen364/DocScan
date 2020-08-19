@@ -3,6 +3,8 @@ package com.codewithnaveen.docscan;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -16,6 +18,10 @@ import java.util.ArrayList;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder> {
     ArrayList<Bitmap> images;
     Context c;
+    private MenuItem pdfmenu;
+    private MenuItem sharemenu;
+    private MenuItem renamemenu;
+    private Menu menu;
     public ImageAdapter(Context c, ArrayList<Bitmap> images){
         this.c = c;
         this.images = images;
@@ -35,9 +41,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
         holder.del.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(images!=null) {
+                if(images.size()>0) {
                     images.remove(position);
                     notifyItemRemoved(position);
+                    ((MainActivity)c).visible();
                 }
             }
         });
@@ -53,8 +60,11 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.MyViewHolder
         ImageButton del;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            img = (ImageView) itemView.findViewById(R.id.myimageView);
-            del = (ImageButton)itemView.findViewById(R.id.delete_img);
+            img = itemView.findViewById(R.id.myimageView);
+            del = itemView.findViewById(R.id.delete_img);
+            pdfmenu = itemView.findViewById(R.id.action_settings);
+            sharemenu = itemView.findViewById(R.id.action_share);
+            renamemenu = itemView.findViewById(R.id.action_Rename);
         }
     }
 }

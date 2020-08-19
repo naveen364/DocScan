@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -142,11 +143,15 @@ public class PickImageFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d("", "onActivityResult" + resultCode);
         Bitmap bitmap = null;
+        Bitmap temp = null;
         if (resultCode == Activity.RESULT_OK) {
             try {
                 switch (requestCode) {
                     case ScanConstants.START_CAMERA_REQUEST_CODE:
-                        bitmap = getBitmap(fileUri);
+                        temp = getBitmap(fileUri);
+                        Matrix matrix = new Matrix();
+                        matrix.setRotate(90);
+                        bitmap = Bitmap.createBitmap(temp, 0, 0, temp.getWidth(), temp.getHeight(),matrix , true);
                         break;
 
                     case ScanConstants.PICKFILE_REQUEST_CODE:

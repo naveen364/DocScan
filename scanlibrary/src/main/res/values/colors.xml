@@ -7,4 +7,8 @@
 
     <color name="polygonViewCircleStrokeColor">#ff59a9ff</color>
     <color name="polygonViewCircleBackground">#90e5f8ff</color>
+    <color name="a">#D9DDE9</color>
+    <color name="b">#FDEFCC</color>
+    <color name="c">#FACEDF</color>
+    <color name="colorPrimary">#7fdba4</color>
 </resources>

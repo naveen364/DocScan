@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,7 +31,10 @@ public class ResultFragment extends Fragment {
     private Button grayModeButton;
     private Button bwButton;
     private Bitmap transformed;
+    private Button rotate;
     private static ProgressDialogFragment progressDialogFragment;
+    private Bitmap temp;
+    private int count;
 
     public ResultFragment() {
     }
@@ -56,7 +60,14 @@ public class ResultFragment extends Fragment {
         setScannedImage(bitmap);
         doneButton = (Button) view.findViewById(R.id.doneButton);
         doneButton.setOnClickListener(new DoneButtonClickListener());
+        rotate = (Button) view.findViewById(R.id.rotate);
+        rotate.setOnClickListener(new RotateButtonClickListener());
+        Matrix m = new Matrix();
+        count = 0;
+        m.setRotate(count+90);
+        temp = Bitmap.createBitmap(original,0,0,original.getWidth(),original.getHeight(),m,true);
     }
+
 
     private Bitmap getBitmap() {
         Uri uri = getUri();
@@ -77,6 +88,21 @@ public class ResultFragment extends Fragment {
 
     public void setScannedImage(Bitmap scannedImage) {
         scannedImageView.setImageBitmap(scannedImage);
+    }
+
+    private class RotateButtonClickListener implements View.OnClickListener{
+        @Override
+        public void onClick(final View v) {
+            try {
+                showProgressDialog(getResources().getString(R.string.applying_filter));
+                transformed = temp;
+                scannedImageView.setImageBitmap(temp);
+                dismissDialog();
+            } catch (OutOfMemoryError e) {
+                e.printStackTrace();
+                dismissDialog();
+            }
+        }
     }
 
     private class DoneButtonClickListener implements View.OnClickListener {

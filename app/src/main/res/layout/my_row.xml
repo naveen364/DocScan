@@ -3,20 +3,18 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="20dp">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/card"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:outlineSpotShadowColor="#808080"
-        android:outlineAmbientShadowColor="#808080">
+        app:layout_constraintTop_toTopOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -24,7 +22,7 @@
 
             <ImageButton
                 android:id="@+id/delete_img"
-                android:layout_width="match_parent"
+                android:layout_width="200dp"
                 android:layout_height="50dp"
                 android:layout_below="@+id/myimageView"
                 app:srcCompat="@android:drawable/presence_busy"
@@ -32,8 +30,8 @@
 
             <ImageView
                 android:id="@+id/myimageView"
-                android:layout_width="348dp"
-                android:layout_height="610dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 app:layout_constraintBottom_toTopOf="@+id/recyclerView"
                 app:layout_constraintEnd_toStartOf="@+id/recyclerView"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -45,8 +43,8 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
-                android:layout_width="348dp"
-                android:layout_height="656dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="10dp" />
         </RelativeLayout>
