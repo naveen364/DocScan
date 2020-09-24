@@ -5,4 +5,11 @@
         <item name="icon">@drawable/ic_icon</item>
     </style>
 
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:textColor">@color/a</item>
+        <item name="android:headerDividersEnabled">true</item>
+        <item name="android:typeface">normal</item>
+        <item name="backgroundColor">@color/colorPrimary</item>
+    </style>
+
 </resources>

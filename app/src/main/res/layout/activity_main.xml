@@ -4,13 +4,17 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:background="#ffffff">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/showimgs"
+        android:visibility="gone"/>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="600dp"
         android:background="@drawable/add_document"
         />
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleview"
@@ -21,8 +25,8 @@
         android:layout_height="match_parent">
     <Button
         android:id="@+id/add"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:background="@drawable/ic_adddocumentbtn"
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"

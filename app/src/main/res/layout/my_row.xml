@@ -19,6 +19,14 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="50sp"
+                android:padding="20dp"
+                android:inputType="number"
+                android:textColor="@color/colorAccent"/>
 
             <ImageButton
                 android:id="@+id/delete_img"
@@ -28,9 +36,9 @@
                 app:srcCompat="@android:drawable/presence_busy"
                 android:background="@color/c"/>
 
-            <ImageView
+            <com.zolad.zoominimageview.ZoomInImageView
                 android:id="@+id/myimageView"
-                android:layout_width="200dp"
+                android:layout_width="wrap_content"
                 android:layout_height="200dp"
                 app:layout_constraintBottom_toTopOf="@+id/recyclerView"
                 app:layout_constraintEnd_toStartOf="@+id/recyclerView"

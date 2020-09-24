@@ -32,6 +32,8 @@ public class PickImageFragment extends Fragment {
     private ImageButton galleryButton;
     private Uri fileUri;
     private IScanner scanner;
+    private Uri imguri;
+    private int pass;
 
     @Override
     public void onAttach(Activity activity) {
@@ -119,7 +121,7 @@ public class PickImageFragment extends Fragment {
         Log.d("", "openCamera: isDirectoryCreated: " + isDirectoryCreated);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             Uri tempFileUri = FileProvider.getUriForFile(getActivity().getApplicationContext(),
-                    "com.scanlibrary.provider", // As defined in Manifest
+                    "com.codewithnaveen.docscan.provider", // As defined in Manifest
                     file);
             cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, tempFileUri);
         } else {
@@ -156,6 +158,7 @@ public class PickImageFragment extends Fragment {
 
                     case ScanConstants.PICKFILE_REQUEST_CODE:
                         bitmap = getBitmap(data.getData());
+                        imguri = data.getData();
                         break;
                 }
             } catch (Exception e) {
@@ -177,7 +180,7 @@ public class PickImageFragment extends Fragment {
 
     private Bitmap getBitmap(Uri selectedimg) throws IOException {
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 3;
+        options.inSampleSize = 2;
         AssetFileDescriptor fileDescriptor = null;
         fileDescriptor =
                 getActivity().getContentResolver().openAssetFileDescriptor(selectedimg, "r");

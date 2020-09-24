@@ -57,25 +57,7 @@
             android:textColor="@android:color/black" />
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/sideBar"
-        android:layout_centerVertical="true"
-        android:layout_above="@+id/doneButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/side_layout_btn"
-        android:padding="5dp">
-        <Button
-            android:id="@+id/rotate"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:drawableTop="@drawable/ic_rotate"
-            android:singleLine="true"
-            android:text="Rotate"
-            android:textColor="@android:color/black" />
-    </LinearLayout>
+
 
     <Button
         android:id="@+id/doneButton"
@@ -83,8 +65,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@drawable/btn_all"
-        android:layout_margin="10dp"
-        android:textColor="#808080"
+        android:layout_marginRight="10dp"
+        android:textColor="#000000"
         android:textSize="18sp"
         android:orientation="horizontal"
         android:padding="@dimen/bottom_bar_padding"

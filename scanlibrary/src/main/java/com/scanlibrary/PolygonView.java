@@ -229,7 +229,7 @@ public class PolygonView extends FrameLayout {
                 case MotionEvent.ACTION_UP:
                     int color = 0;
                     if (isValidShape(getPoints())) {
-                        color = getResources().getColor(R.color.blue);
+                        color = getResources().getColor(R.color.colorPrimary);
                     } else {
                         color = getResources().getColor(R.color.orange);
                     }
@@ -277,7 +277,7 @@ public class PolygonView extends FrameLayout {
                 case MotionEvent.ACTION_UP:
                     int color = 0;
                     if (isValidShape(getPoints())) {
-                        color = getResources().getColor(R.color.blue);
+                        color = getResources().getColor(R.color.colorPrimary);
                     } else {
                         color = getResources().getColor(R.color.orange);
                     }

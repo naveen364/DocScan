@@ -7,11 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,7 +16,6 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.InputType;
-import android.util.DisplayMetrics;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -44,7 +41,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -62,8 +58,10 @@ public class MainActivity extends AppCompatActivity {
     private String mtext;
     private String save;
     private MenuItem menushare;
-    private MenuItem menupdf;
+    private MenuItem menupdf,createnew;
     private LinearLayout linearLayout;
+    private static final String LIST_STATE_KEY = "recycle_layout";
+    private boolean isToggled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,17 +144,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-
     public void img_bitmap(Uri uri){
         try {
             bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
             getContentResolver().delete(uri, null, null);
             Matrix matrix = new Matrix();
             matrix.setRotate(0);
-            Bitmap bitmap1 = bitmap.copy(Bitmap.Config.ARGB_8888,false);
-            Bitmap outBitmap = Bitmap.createBitmap(bitmap1, 0, 0, bitmap1.getWidth(), bitmap1.getHeight(), matrix, true);
-            Bitmap scalebitmap = Bitmap.createScaledBitmap(outBitmap,595,842,true);
-            bitmapArrayList.add(scalebitmap);
+            Bitmap outBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+            bitmapArrayList.add(outBitmap);
             imageAdapter.notifyDataSetChanged();
             if (bitmapArrayList!=null){
                 add.setVisibility(View.VISIBLE);
@@ -216,20 +211,6 @@ public class MainActivity extends AppCompatActivity {
         visible();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mBundleRecyclerViewState = Objects.requireNonNull(recyclerView.getLayoutManager()).onSaveInstanceState();
-        visible();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        Objects.requireNonNull(recyclerView.getLayoutManager()).onRestoreInstanceState(mBundleRecyclerViewState);
-        visible();
-    }
-
 
     public void askpermission(){
         RxPermissions rxPermissions = new RxPermissions(this);
@@ -246,21 +227,32 @@ public class MainActivity extends AppCompatActivity {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 PdfDocument pdfDocument = new PdfDocument();
                 for(int i = 0; i<=count-1; i++){
-                    bitmap = bitmapArrayList.get(i);
-                    PdfDocument.PageInfo mypageinfo = new PdfDocument.PageInfo.Builder(598,842,temp+i).create();
+                    try {
+                        bitmap = bitmapArrayList.get(i);
+                        Toast.makeText(this,"width is "+bitmap.getWidth(),Toast.LENGTH_SHORT).show();
+                    }catch(IndexOutOfBoundsException e){
+                        e.printStackTrace();
+                    }
+                 //   DisplayMetrics metrics = getApplicationContext().getResources().getDisplayMetrics();
+                    int w =595;//metrics.widthPixels;
+                    int h =842;// metrics.heightPixels;
+                    PdfDocument.PageInfo mypageinfo = new PdfDocument.PageInfo.Builder(w,h,temp+i).create();
                     PdfDocument.Page mypage = pdfDocument.startPage(mypageinfo);
                     canvas = mypage.getCanvas();
+                    float scalew = w/(float)bitmap.getWidth();
+                    float scaley = h/(float)bitmap.getHeight();
+                    float xTrans = 0.0f;
+                    float yTrans = (h - bitmap.getHeight()*scalew)/20.0f;
+                    Matrix transform = new Matrix();
+                    transform.postTranslate(xTrans,yTrans);
+                    transform.preScale(scalew,scaley);
                     Paint paint = new Paint();
-                    paint.setColor(Color.WHITE);
-                    DisplayMetrics mertrix = getApplicationContext().getResources().getDisplayMetrics();
-                    int w = mertrix.widthPixels;
-                    int h = mertrix.heightPixels;
-
-                    Rect frameToDraw = new Rect(0,0,w,h);
-                    RectF whereToDraw = new RectF(0,0,w,h);
-                    canvas.drawBitmap(bitmap,frameToDraw,whereToDraw,paint);
+                    paint.setFilterBitmap(true);
+                   // bitmap = Bitmap.createScaledBitmap(bitmap,w,h,false);
+                   // Rect rect = new Rect(0,0,w,h);
+                   // RectF rectf = new RectF(0,0,w,h);
+                    canvas.drawBitmap(bitmap,transform,paint);
                     pdfDocument.finishPage(mypage);
-                    bitmap.recycle();
                 }
                 pdfDocument.writeTo(fileOutputStream);
                 pdfDocument.close();
@@ -268,34 +260,34 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }
-      //  if(save!= null){
-            //shareFile(save);
-       // }
+
     }
 
     public ImageAdapter getImageAdapter() {
         return imageAdapter;
     }
-/*
-    private void shareFile(String save){
-        File fdir = new File(Environment.getExternalStorageDirectory(),"docscan");
-        String path = Environment.getExternalStorageDirectory()+"/docscan/"+save+".pdf";
-        Toast.makeText(this,"path"+path,Toast.LENGTH_SHORT).show();
-        File file = new File(path);
-        Uri bmpUri = FileProvider.getUriForFile(this,"com.codewithnaveen.docscan.fileprovider",file);
-        if(fdir.exists()) {
-            Intent intentShareFile = new Intent(Intent.ACTION_VIEW);
-            intentShareFile.setDataAndType(bmpUri,"application/pdf");
-            intentShareFile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            try{
-                startActivity(intentShareFile);
-            }catch (ActivityNotFoundException e){
 
-            }
-        }
+    private void openpdf(String save){
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        String path =Environment.getExternalStorageDirectory().getAbsolutePath()+"/docscan";
+        File file1 = new File(path,save+".pdf");
+        Uri uri1 = FileProvider.getUriForFile(MainActivity.this,"com.codewithnaveen.docscan.provider",file1);
+        intent.setDataAndType(uri1,"application/pdf");
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(intent);
     }
-    */
+
+    private void shareFile(String save){
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        String path =Environment.getExternalStorageDirectory().getAbsolutePath()+"/docscan";
+        File file1 = new File(path,save+".pdf");
+        Uri uri1 = FileProvider.getUriForFile(MainActivity.this,"com.codewithnaveen.docscan.provider",file1);
+        intent.setDataAndType(uri1,"application/pdf");
+        intent.putExtra(Intent.EXTRA_STREAM,uri1);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        startActivity(Intent.createChooser(intent,"share"));
+    }
+
 
     private File getOutputFile(String mtext){
         File file = new File(Environment.getExternalStorageDirectory(),"docscan");
@@ -328,15 +320,13 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menupdf = menu.findItem(R.id.action_settings);
-        menushare = menu.findItem(R.id.action_share);
-        MenuItem menurename = menu.findItem(R.id.action_Rename);
+        menushare = menu.findItem(R.id.action_Rename);
+        createnew = menu.findItem(R.id.createnew);
         if(getImageAdapter() == null || getImageAdapter().getItemCount() == 0){
             menupdf.setVisible(false);
-            menurename.setVisible(false);
             menushare.setVisible(false);
         }else {
             menupdf.setVisible(true);
-            menurename.setVisible(true);
             menushare.setVisible(true);
         }
 
@@ -345,21 +335,47 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             if(bitmapArrayList.size()>0) {
-                createpdf(bitmapArrayList.size());
-                bitmapArrayList.clear();
-                menupdf.setVisible(false);
-                menushare.setVisible(false);
-                Toast.makeText(this, "pdf saved"+bitmapArrayList, Toast.LENGTH_SHORT).show();
-                imageAdapter.notifyDataSetChanged();
-                visible();
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("Your Image is Scanned And Ready");
+                builder.setTitle("Open or Share");
+                builder.setCancelable(true);
+                builder.setPositiveButton(" ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        createpdf(bitmapArrayList.size());
+                        openpdf(save);
+                        Toast.makeText(MainActivity.this, "Open Successfully", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+                builder.setNeutralButton(" ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Toast.makeText(MainActivity.this, "Dialog closed", Toast.LENGTH_SHORT).show();
+                        dialogInterface.cancel();
+                    }
+                });
+
+                builder.setNegativeButton(" ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        createpdf(bitmapArrayList.size());
+                        shareFile(save);
+                    }
+                });
+
+
+                AlertDialog alert = builder.create();
+                alert.show();
+                Button open = alert.getButton(AlertDialog.BUTTON_POSITIVE);
+                open.setBackgroundResource(R.drawable.ic_open);
+                Button shared = alert.getButton(AlertDialog.BUTTON_NEGATIVE);
+                shared.setBackgroundResource(R.drawable.ic_share);
+                Button close = alert.getButton(AlertDialog.BUTTON_NEUTRAL);
+                close.setBackgroundResource(R.drawable.ic_close);
             }
             else{
                 Toast.makeText(this, "please Select Image", Toast.LENGTH_SHORT).show();
@@ -368,11 +384,23 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
+        if(id == R.id.createnew){
+            if(bitmapArrayList.size()>0) {
+                bitmapArrayList.clear();
+                menupdf.setVisible(false);
+                menushare.setVisible(false);
+                imageAdapter.notifyDataSetChanged();
+                visible();
+            }
+            return true;
+        }
+
         if(id == R.id.action_Rename){
             AlertDialog.Builder builder1 = new AlertDialog.Builder(this);
             builder1.setTitle("Rename Pdf");
             final EditText input = new EditText(this);
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_NUMBER_VARIATION_PASSWORD);
+            input.setPivotX(5);
             builder1.setView(input);
             builder1.setPositiveButton("ok", new DialogInterface.OnClickListener() {
                 @Override
@@ -387,13 +415,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             builder1.show();
+            return true;
         }
-
-      /*  if(id == R.id.action_share) {
-
-        }*/
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
 }

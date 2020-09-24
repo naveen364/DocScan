@@ -8,5 +8,7 @@
     <string name="save_as_pdf">Save As Pdf</string>
     <string name="Rename">rename</string>
     <string name="share_pdf" />
+    <string name="create_new">Create New</string>
+    <string name="compress">COMPRESS</string>
 
 </resources>
